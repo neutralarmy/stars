@@ -1,0 +1,8 @@
+requests
+flask
+bs4
+gunicorn
+jinja2
+python-dotenv
+itsdangerous
+click
