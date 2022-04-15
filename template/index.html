@@ -1,68 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
+
+<html>
 <head>
-  <title>IPL 2022 LIVE ðŸ“º</title>
-  <meta charset="UTF-8"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- STEP 1 - SDK Installation-->
-  <script src="https://cdn.bitmovin.com/player/web/8/bitmovinplayer.js" type="text/javascript"></script>
-</head>
-<body>
-
-<!-- STEP 2 - Provide a player container element-->
-<div id="my-player"></div>
-
+<script src="https://ajax.googleapis.com/ajax/libs/shaka-player/3.3.2/shaka-player.ui.js"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/shaka-player/3.3.2/controls.css">
 <script>
-//<!-- STEP 3 - Configure and Initialize the player-->
-var playerConfig = {
-  "key": "5CB94247-E7C9-47F6-8529-941ED6091931",
-  "advertising": {
-    "adBreaks": [
-      {
-        "tag": {
-          "type": "vast",
-          "url": "https://www.videosprofitnetwork.com/watch.xml?key=c19849b20c7067b38539ceb234796944"
-        }
-      }
-    ]
-  }
-}
-  
-var container = document.getElementById('my-player');
-var player = new bitmovin.player.Player(container, playerConfig);
+const manifestUri ='https://delta4tatasky.akamaized.net/out/i/6527246.mpd';
 
-//<!-- STEP 4 - Configure and load a Source for the player -->
-var sourceConfig = {
-  "title": "IPL 2022 LIVE Telegram: @fireplexapp",
-  "description": "Join Telegram @fireplexapp to enjoy freely. ",
-  "poster": "https://st.adda247.com/https://wpassets.adda247.com/wp-content/uploads/multisite/sites/5/2022/03/27101427/ipl-2022-live-streaming-.jpg",
-  "dash": "https://delta4tatasky.akamaized.net/out/i/6527246.mpd",
-  "hls": "https://bitmovin-a.akamaihd.net/content/art-of-motion_drm/m3u8s/11331.m3u8",
-  "smooth": "https://test.playready.microsoft.com/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism/manifest",
-  "drm": {
-    "widevine": {
-      "LA_URL": "{{streamurl}}"
-    },
-    "playready": {
-      "LA_URL": "https://playready.directtaps.net/pr/svc/rightsmanager.asmx?PlayRight=1&ContentKey=EAtsIJQPd5pFiRUrV9Layw=="
+async function init() {
+  // When using the UI, the player is made automatically by the UI object.
+  const video = document.getElementById('video');
+  const ui = video['ui'];
+  const controls = ui.getControls();
+  const player = controls.getPlayer();
+
+  // Attach player and ui to the window to make it easy to access in the JS console.
+  window.player = player;
+  window.ui = ui;
+  player.configure({
+  drm: {
+    servers: {
+      'com.widevine.alpha': '{{streamurl}}',
     }
   }
+});
+	 // Listen for error events.
+  player.addEventListener('error', onPlayerErrorEvent);
+  controls.addEventListener('error', onUIErrorEvent);
+
+  // Try to load a manifest.
+  // This is an asynchronous process.
+  try {
+    await player.load(manifestUri);
+    // This runs if the asynchronous load is successful.
+    console.log('The video has now been loaded!');
+  } catch (error) {
+    onPlayerError(error);
+  }
 }
 
-player.load(sourceConfig).then(function() {
-    console.log('Successfully loaded Source Config!');
-  }).catch(function(reason) {
-    console.log('Error while loading source:', reason);
-  }
-);
+function onPlayerErrorEvent(errorEvent) {
+  // Extract the shaka.util.Error object from the event.
+  onPlayerError(event.detail);
+}
 
+function onPlayerError(error) {
+  // Handle player error
+  console.error('Error code', error.code, 'object', error);
+}
 
+function onUIErrorEvent(errorEvent) {
+  // Extract the shaka.util.Error object from the event.
+  onPlayerError(event.detail);
+}
 
+function initFailed(errorEvent) {
+  // Handle the failure to load; errorEvent.detail.reasonCode has a
+  // shaka.ui.FailReasonCode describing why.
+  console.error('Unable to load the UI library!');
+}
+
+// Listen to the custom shaka-ui-loaded event, to wait until the UI is loaded.
+document.addEventListener('shaka-ui-loaded', init);
+// Listen to the custom shaka-ui-load-failed event, in case Shaka Player fails
+// to load (e.g. due to lack of browser support).
+document.addEventListener('shaka-ui-load-failed', initFailed);	
 </script>
-<div class="separator" style="clear: both;"><a href="https://telegram.me/fireplexapp" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="512" data-original-width="512" height="238" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhkp0zUcPxTouK5Xvtkzm4MKO9zC8q6AwVE4hox64XRg7RISsAfbpxyZwh5yPEDAHo7nSojOvzkok1NWch_CMrqEbBMgUsp-Do0BVLZ6TYkz3sgt8_sNeh3BlmJLJeLpr8sw2IvgqUFBkMm6cKBm6Okojxc1opxsUtcislfDwd2ntjoPRoatGAHn-o7LA/w238-h238/kisspng-telegram-encapsulated-postscript-transfer-5b17060586a686.1271014115282355255515.png" width="238" /></a><a href="https://telegram.me/fireplexapp" style="display: block; padding: 1em 0px; text-align: center;">Link will be change daily so, Join Our Telegram Channel @fireplexapp for latest updates</a><div class="separator" style="clear: both; text-align: center;"><a href="https://telegram.me/fireplexapp" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="142" data-original-width="475" height="64" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiHPObXqn2LjoBqtZAZCsezq4JhFCGD9L_gX0pMHcm_ehItlEJWXKyugZ7uYCQKY_J-u4K32S971xK5n7lTAVxOg9r7Cz9y8KFcj3SyEng88H6AXrD9UNAoBtLoWZZw6rnKcyv9EoCB6XgLC6K0xOPJBCsjMrW0mqVBbZTrlvA5zUblAQ-pi8HrOYKe4Q/w214-h64/Join-Now-Free-Download-PNG.png" width="214" /></a></div><br /><br /></div>
+</head>
+<body>
+    <!-- The data-shaka-player-container tag will make the UI library place the controls in this div.
+         The data-shaka-player-cast-receiver-id tag allows you to provide a Cast Application ID that
+           the cast button will cast to; the value provided here is the sample cast receiver. -->
+    <div data-shaka-player-container style="max-width:40em"
+         data-shaka-player-cast-receiver-id="BBED8D28">
+       <!-- The data-shaka-player tag will make the UI library use this video element.
+            If no video is provided, the UI will automatically make one inside the container div. -->
+      <video autoplay data-shaka-player id="video" style="width:100%;height:100%"></video>
+    </div>
 
 
-
-</body>
+<div class="separator" style="clear: both;"><a href="https://telegram.me/fireplexapp" style="display: block; padding: 1em 0px; text-align: center;"><img alt="" border="0" data-original-height="512" data-original-width="512" height="238" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhkp0zUcPxTouK5Xvtkzm4MKO9zC8q6AwVE4hox64XRg7RISsAfbpxyZwh5yPEDAHo7nSojOvzkok1NWch_CMrqEbBMgUsp-Do0BVLZ6TYkz3sgt8_sNeh3BlmJLJeLpr8sw2IvgqUFBkMm6cKBm6Okojxc1opxsUtcislfDwd2ntjoPRoatGAHn-o7LA/w238-h238/kisspng-telegram-encapsulated-postscript-transfer-5b17060586a686.1271014115282355255515.png" width="238" /></a><a href="https://telegram.me/fireplexapp" style="display: block; padding: 1em 0px; text-align: center;">Link will be change daily so, Join Our Telegram Channel @fireplexapp for latest updates !</a><div class="separator" style="clear: both; text-align: center;"><a href="https://telegram.me/fireplexapp" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="142" data-original-width="475" height="64" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiHPObXqn2LjoBqtZAZCsezq4JhFCGD9L_gX0pMHcm_ehItlEJWXKyugZ7uYCQKY_J-u4K32S971xK5n7lTAVxOg9r7Cz9y8KFcj3SyEng88H6AXrD9UNAoBtLoWZZw6rnKcyv9EoCB6XgLC6K0xOPJBCsjMrW0mqVBbZTrlvA5zUblAQ-pi8HrOYKe4Q/w214-h64/Join-Now-Free-Download-PNG.png" width="214" /></a></div><br /><br /></div>
+  </body>
 </html>
